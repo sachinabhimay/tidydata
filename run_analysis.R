@@ -2,75 +2,47 @@
 library(data.table)
 library(dplyr)
 
-## reading features names
-feature <- read.table("../data/UCI HAR Dataset/features.txt")
 
-## reading 
-activity_labels <- read.table("../data/UCI HAR Dataset/activity_labels.txt")
+feature <- read.table("../data/UCI HAR Dataset/features.txt")        ## reading features names
 
-## reading training dataset
-X_train <- read.table("../data/UCI HAR Dataset/train/X_train.txt")
+activity_labels <- read.table("../data/UCI HAR Dataset/activity_labels.txt")  ## reading acivities
 
-## 4.
-## assigning names to dataset from features
-names(X_train) <- feature$V2
+X_train <- read.table("../data/UCI HAR Dataset/train/X_train.txt")     ## reading training dataset
+y_train <- read.table("../data/UCI HAR Dataset/train/y_train.txt")      ## reading activity dataset
+subject_train <- read.table("../data/UCI HAR Dataset/train/subject_train.txt")   ## reading subject names in training dataset
 
-## reading activity dataset
-y_train <- read.table("../data/UCI HAR Dataset/train/y_train.txt")
-
-## reading subject names in training dataset
-subject_train <- read.table("../data/UCI HAR Dataset/train/subject_train.txt")
-
-## reading testing dataset
-X_test <- read.table("../data/UCI HAR Dataset/test/X_test.txt")
+X_test <- read.table("../data/UCI HAR Dataset/test/X_test.txt")         ## reading testing dataset
+y_test <- read.table("../data/UCI HAR Dataset/test/y_test.txt")         ## reaind activity dataset
+subject_test <- read.table("../data/UCI HAR Dataset/test/subject_test.txt")   ## reading subject names in testing dataset
 
 ## 4.
-## assigning names to dataset from features
-names(X_test) <- feature$V2
-
-## reaind activity dataset
-y_test <- read.table("../data/UCI HAR Dataset/test/y_test.txt")
-
-## reading subject names in testing dataset
-subject_test <- read.table("../data/UCI HAR Dataset/test/subject_test.txt")
-
-## 4.
-## assigning name to subject variable
-names(subject_train) <- c("subject")
+feature$V2 <- gsub("()|-","",feature$V2)
+names(X_test) <- feature$V2    ## assigning names to dataset from features
+names(X_train) <- feature$V2  
+names(subject_train) <- c("subject")  ## assigning name to subject variable
 names(subject_test) <- c("subject")
-
-## 4.
-## assigning name to result variable
-names(y_train) <- c("result")
+names(y_train) <- c("result") ## assigning name to result variable
 names(y_test) <- c("result")
 
-## subject_train X_train y_train
-data_train <- cbind(subject_train, X_train, y_train)
 
-## subject_test X_test y_test
-data_test <- cbind(subject_test, X_test, y_test)
+data_train <- cbind(subject_train, X_train, y_train)  ## subject_train + X_train + y_train
+data_test <- cbind(subject_test, X_test, y_test)   ## subject_test + X_test + y_test
 
 ## 1.
-## data_train + data_test
-data <- rbind(data_train , data_test)
+data <- rbind(data_train , data_test)  ## data_train + data_test
 
 ## 2.
-## columns with mean or std
-colnumbers <- grep("mean()|std()", names(data))
-
-## new data with only mean and 
-data_sim <- data[,c(1, colnumbers, 563)]
+colnumbers <- grep("mean()|std()", names(data)) ## columns with mean or std
+data_sim <- data[,c(1, colnumbers, 563)]  ## new data with only mean and std 
 
 ## 3.
 ## assigning names to result variable as activity name
-data_sim$result = as.character(factor(data_sim$result, labels = activity_labels$V2))
-
-## to tbl format
-data_sim_tbl <- tbl_df(data_sim)
-
-## grouping by subject and result
-data_sim_tbl_group <- group_by(data_sim_tbl, subject, result)
+data_sim$result = as.character(factor(data_sim$result, labels = activity_labels$V2)) 
 
 ## 5.
-## applying mean over the group
-data_final <- summarise_all(data_sim_tbl_group, mean)
+data_sim_tbl <- tbl_df(data_sim)                                ## to tbl format
+data_sim_tbl_group <- group_by(data_sim_tbl, subject, result)   ## grouping by subject and result
+data_final <- summarise_all(data_sim_tbl_group, mean)           ## applying mean over the group
+
+## Final
+write.table(data_final, row.names = FALSE,"../data/data_final.txt")   ## Writing data in file
