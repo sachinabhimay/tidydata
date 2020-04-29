@@ -187,7 +187,7 @@ tBodyGyroMean
 tBodyGyroJerkMean
 
 ## Variable in X_train and X_test
-  Variables are given in features.txt [file]()
+  Variables are given in features.txt [file](https://github.com/sachinabhimay/tidydata/blob/master/features.txt)
 
 
 
