@@ -5,6 +5,18 @@ It uses two R Packages:
   1. data.table
   2. dplyr
   
+## Steps to follow:
+  1. Set working directory
+  2. Read data and check the features of data
+      * read dimensions
+      * read variables
+      * look for common key
+  3. Give proper names to variables
+  4. Select requied portion of data into separate data frame and don't mess with raw data frame directly to avoid re-reading in case of failure.
+  5. Go through the assignmnet steps one my one
+  6. Once complelete save the commit and push the assignment on git
+  7. Create a markdown file to explain steps.
+  
 It uses data set from Coursera. Which can be downloaded from [here](https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip).
 #### Including library
 ``` 
